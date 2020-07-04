@@ -1,0 +1,119 @@
+Travaux pratiques
+
+2.1 Séance 1 : histogrammes, binarisation et images couleur
+
+2.1.2 Fonctions utiles
+
+Pour tous les exercices
+    • ImRead : lire un fichier image au format ppm, pgm ou pbm
+    • ImWrite : écrire une image dans un fichier au format ppm, pgm ou pbm
+    • ImAlloc et ImCAlloc : créer une nouvelle image
+    • ImGetR : accéder à la composante rouge des pixels d'une image couleur (type Color)
+    • ImGetG : accéder à la composante verte des pixels d'une image couleur (type Color)
+    • ImGetB : accéder à la composante bleue des pixels d'une image couleur (type Color)
+    • ImGetI : accéder aux niveaux de gris d'une image en niveaux de gris ou noir et blanc (types GrayLevel et BitMap)
+    • ImNbRow : nombre de lignes d'une image
+    • ImNbCol : nombre de colonnes d'une image
+    • ImFree : libérer la mémoire occupée par une image
+
+Pour les exercices 2 et 3
+Utilisez des matrices de int (type Int) pour stocker les histogrammes.
+    • MatAlloc et MatCAlloc : créer une nouvelle matrice matrice
+    • MatGetInt : accéder aux éléments d'une matrice de int 
+    • MatWriteAsc : écrire une matrice dans un fichier au format Matrix ou l’afficher à l'écran
+    • MatNbRow : nombre de lignes d'une matrice
+    • MatNbCol : nombre de colonnes d'une matrice
+    • MatFree : libérer la mémoire occupée par une matrice
+
+2.1.3 Travail à réaliser
+
+En utilisant la bibliothèque LIMaCE, écrivez un programme C que vous compléterez au fur et à mesure des exercices décrits ci-dessous. Dès que vous avez terminé un exercice, appelez l’enseignant-e afin qu’il-elle valide l’étape.
+
+Exercice 1 – De 16 777 216 couleurs à 256 niveaux de gris
+
+À partir de l'image couleur chenille.ppm créez une nouvelle image, en niveau de gris, chenille.pgm.
+Le calcul du niveau de gris I d'un pixel à partir de ses composantes rouge R, verte G et bleue B peut être obtenu en effectuant une moyenne pondérée des trois composantes appelée luminance (les poids correspondent à notre sensibilité aux trois composantes) :
+I = [(0.299)R + (0.587)G + (0.114)B]
+où [x] est l’entier le plus proche de x.
+
+Exercice 2 – Histogramme des niveaux de gris
+
+    • Calculez l'histogramme des niveaux de gris de l'image chenille.pgm.
+    • Écrivez cet histogramme dans le fichier au format Matrix chenille-hist.mx.
+Afin de visualiser graphiquement l’histogramme d’une image, voici une fonction qui transforme un histogramme stocké dans une matrice (type Int) en une image de niveaux de gris :
+/*
+* Representation d'un histogramme sou­s forme d'une image
+* Entrees : histogramme et nombre de lignes (par exemple 256) de l'image resultat
+* Sortie : image resultat
+*/
+Image Hist2Im(Matrix Hist, int NbLig)
+{
+    unsigned char **I;
+    int *h,i,j,Max=0,NbCol=256;
+    Image Resultat;
+    
+    if (MatType(Hist)!=Int) return NULL;
+    Resultat=ImCAlloc(GrayLevel,NbLig,NbCol);
+    h=*MatGetInt(Hist);
+    for (j=0;j<NbCol;j++)
+        if (h[j]>Max) Max=h[j];
+    I=ImGetI(Resultat);
+    for (j=0;j<256;j++)
+        for (i=NbLig-1;i>=(NbLig-NbLig*h[j]/Max);i--)
+            I[i][j]=255;
+    return Resultat;    
+}
+Cette fonction peut-être utilisée pour visualiser un histogramme ou un histogramme cumulé.
+
+Exercice 3 – De 256 niveaux de gris à 2 niveaux de gris : binarisation par seuillage global
+
+    • Affichez dans la console l’histogramme des niveaux de gris de l'image chenille.pgm.
+    • Analysez cet histogramme et trouvez un seuil permettant de distinguer les taches très sombres sur le corps de la chenille
+    • À partir de l'image en niveau de gris chenille.pgm, créez une image noir et blanc (binaire) chenille.pbm. Pour ce faire, transformez en noir (0) tous les niveaux de gris strictement inférieurs au seuil et en blanc (1) tous ceux qui sont supérieurs ou égaux au seuil. 
+
+Exercice 4 – Manipulation des composantes couleur 
+
+À partir de l’image chenille.ppm, créez l'image chenille-lsd.ppm en mettant, pour chaque composante, à 0 les valeurs strictement inférieures à 128 et à 255 celles qui sont supérieures ou égales à 128.
+
+2.1.4 Pour aller plus loin
+Vous pouvez programmer d’autres manipulation des trois composantes d’une image couleur, par exemple en mettant à 0 tous les niveaux de l’une ou deux des composantes ou en échangeant deux composantes, etc.
+
+
+2.2 Séance 2 : transformations ponctuelles, spécification d'histogramme
+
+L’objectif de cette séance est d’ajouter des opérateurs à ceux que vous avez programmés lors de la première séance.
+Comme lors de la première séance, dès que vous avez terminé un exercice, appelez l’enseignant-e afin qu’il-elle valide l’étape.
+
+Exercice 1 – Application d’une transformation ponctuelle
+
+    • Écrivez une fonction qui applique une transformation ponctuelle à une image de niveaux de gris. La transformation ponctuelle est représentée par sa table de transcodage stockée sous la forme d’une matrice de int (Matrix de type Int) de 256 lignes et 1 colonne.
+    • Testez cette fonction en utilisant l’image chenille.pgm et le fichier lut-inv.mx ci-dessous qui contient la table de transcodage permettant l’inversion des niveaux de gris.
+
+
+Exercice 2 – Calcul d’un histogramme cumulé
+
+    • Écrivez une fonction qui, à partir d’un histogramme de niveaux de gris, calcule l’histogramme cumulé correspondant.
+    • Testez cette fonction sur l’image vaisseaux.pgm ci-dessous et écrivez l’histogramme cumulé obtenu dans le fichier vaisseaux-cumhist.mx.
+
+
+Exercice 3 - Égalisation d’histogramme
+
+Il s’agit ici d’utiliser la méthode d’égalisation d’histogramme reposant sur l’utilisation d’une fonction de répartition désirée continue.
+    • Écrivez une fonction qui, à partir d’une image de niveaux de gris, calcule la transformation ponctuelle permettant d’égaliser l’histogramme de cette image en utilisant l'expression :
+f(i)=[255hc(i)]
+où hc désigne l’histogramme cumulé normalisé de l’image et [x] est l’entier le pus proche de x.
+    • Testez cette fonction sur l’image vaisseaux.pgm et écrivez la transformation ponctuelle obtenue dans le fichier vaisseaux-eq1.mx.
+    • Appliquez cette transformation ponctuelle à l’image vaisseaux.pgm et écrivez l’image transformée dans le fichier vaisseaux-eq1.pgm.
+    • Visualisez l’histogramme de l’image vaisseaux.pgm et l’histogramme de l’image vaisseaux-eq1.pgm.
+
+Exercice 4 – Histogramme uniforme
+
+    • Écrivez une fonction qui, à partir d’un nombre de pixels, calcule l'histogramme cumulé correspondant à l’histogramme uniforme.
+    • Testez cette fonction avec le nombre de pixels de l’image vaisseaux.pgm et écrivez l’histogramme cumulé obtenu dans le fichier vaisseaux-descumhist.mx. 
+
+Exercice 5 – Algorithme de spécification d’histogramme
+
+    • Écrivez une fonction qui, à partir de l’histogramme cumulé d’une image et d’un histogramme cumulé désiré, calcule la transformation ponctuelle obtenue par l’algorithme de spécification d’histogramme.
+    • Testez cette fonction afin de réaliser une égalisation d’histogramme en l’appliquant sur l’image vaisseaux.pgm avec l’histogramme cumulé désiré vaisseaux-descumhist.mx ; écrivez la transformation ponctuelle obtenue dans le fichier vaisseaux-eq2.mx.
+    • Appliquez cette transformation ponctuelle à l’image vaisseaux.pgm et écrivez l’image transformée dans le fichier vaisseaux-eq2.pgm.
+
