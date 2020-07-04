@@ -7,4 +7,4 @@ HOW TO COMPILE:
 make
 
 HOW TO USE:
-See the folder "instructions" to see exercices
+See the folder "instructions" to see exercices. The exercices that are fully fonctionnal are exo1 to exo4 seance except exo3 seance 2. See the mainProgram.c file and uncomment the line of exercice that you want to use and comment all the other one. 

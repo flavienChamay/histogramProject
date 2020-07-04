@@ -301,13 +301,13 @@ void exo3Seance2(Image greyImage){
 }
 
 int main(){
-	//~ exo1Seance1("chenille.ppm"); OK
+	exo1Seance1("chenille.ppm"); OK
 	//~ exo2Seance1(exo1Seance1("chenille.ppm")); OK
 	//~ exo3Seance1(); OK
 	//~ exo4Seance1("chenille.ppm"); OK
 	//~ exo1Seance2("lut-inv.mx", exo1Seance1("chenille.ppm")); OK
 	//~ exo2Seance2(exo2Seance1(exo1Seance1("chenille.ppm")));   OK
-	exo3Seance2(ImRead("vaisseaux.pgm")); //NOT OK!!!!!!!!!!!!!
+	//exo3Seance2(ImRead("vaisseaux.pgm")); //NOT OK!!!!!!!!!!!!!
 	return(0);
 }
 
